@@ -1,0 +1,6 @@
+{
+  "name": "Miche de Pain",
+  "description": "Boulangerie Pâtisserie Miche de Pain — L'excellence boulangère au cœur de Paris.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Tight", sans-serif;
+  --font-heading: "Instrument Serif", serif;
+  --font-body: "Barlow", sans-serif;
+  --color-brand-bg: #301e12;
+}
+
+body {
+  background: linear-gradient(180deg, #070504 0%, #170f0a 35%, #2e1b10 65%, #92693e 88%, #dfc098 100%) no-repeat;
+  background-attachment: fixed;
+  color: #ffffff;
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  line-height: 1.4;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+::selection {
+  background: #dfc098;
+  color: #070504;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070504;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(223, 192, 152, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(223, 192, 152, 0.4);
+}
+
+/* ─── Liquid Glass (Nous Trouver section) ─── */
+@layer components {
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .liquid-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0.45) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .liquid-glass-strong {
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+    border: none;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05),
+      inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .liquid-glass-strong::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.2) 80%,
+      rgba(255, 255, 255, 0.5) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* ─── Atelier / Visualiseur de Fournil (cartes produit interactives) ─── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.2vw, 20px);
+  align-items: stretch;
+}
+
+.card-frame {
+  aspect-ratio: 319 / 404;
+  border-radius: clamp(18px, 1.7vw, 28px);
+  overflow: hidden;
+  background: #0e0d0c;
+  box-shadow: 0 36px 70px -34px rgba(28, 18, 8, 0.42), 0 4px 14px -8px rgba(0, 0, 0, 0.18);
+}
+
+.direct-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #1a1714;
+  isolation: isolate;
+}
+
+.direct-card__artboard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 660px;
+  height: 836px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #1a1714;
+  isolation: isolate;
+  container-type: inline-size;
+  transform: translate(-50%, -50%) scale(var(--direct-scale, 1));
+  transform-origin: center center;
+}
+
+/* Media layers */
+.direct-card__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  z-index: 0;
+  transition: opacity 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.direct2-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.is-night .direct2-video {
+  opacity: 1;
+}
+
+.direct2-grade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(8, 6, 4, 0.92) 0%, rgba(8, 6, 4, 0.6) 13%, rgba(8, 6, 4, 0.1) 28%, rgba(8, 6, 4, 0) 42%),
+              linear-gradient(to bottom, rgba(20, 14, 8, 0.34) 0%, rgba(20, 14, 8, 0) 20%);
+}
+
+.direct-footer {
+  position: absolute;
+  z-index: 4;
+  left: 6.2%;
+  right: 6.2%;
+  bottom: 5.4%;
+  color: #fff;
+}
+
+.direct-footer__head {
+  display: flex;
+  align-items: center;
+  gap: 3%;
+  margin-bottom: 3.2%;
+}
+
+.direct-footer__icon {
+  flex: none;
+  width: 9.6%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.direct-footer__title {
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.6px;
+  white-space: nowrap;
+  font-size: clamp(18px, 5.6cqw, 36px);
+}
+
+.direct-footer__desc {
+  color: #d7d2c9;
+  font-weight: 500;
+  line-height: 1.28;
+  max-width: 100%;
+  font-size: clamp(13px, 4.2cqw, 27px);
+}
+
+/* Fiche recette : apparition + scrollbar */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.35s ease-out both;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(180, 140, 90, 0.35);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(180, 140, 90, 0.55);
+}
+
+/* Responsive grille cartes */
+@media (max-width: 920px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(16px, 3vw, 24px);
+  }
+}
+
+@media (max-width: 540px) {
+  .cards {
+    grid-template-columns: 1fr;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+}
+
+/* ─── Galerie « Le Panis » (lien carte 1 — polices scopées, n'affecte pas le site) ─── */
+.panis-gallery {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+.panis-gallery .font-serif {
+  font-family: "Cormorant Garamond", ui-serif, Georgia, serif;
+}
+.panis-gallery .font-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+.museum-vignette {
+  background: radial-gradient(circle at center, rgba(253, 251, 247, 0.85) 0%, rgba(245, 240, 233, 0.98) 100%);
+}
+
+@keyframes fadeInPanis {
+  from { opacity: 0; transform: scale(0.97) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.panis-gallery .animate-fade-in {
+  animation: fadeInPanis 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
