@@ -342,6 +342,7 @@ export default function App() {
           id="bg-video-hero"
           ref={videoRef}
           src="/videos/hero.mp4"
+          poster="/videos/hero-poster.webp"
           className="w-full h-full object-cover"
           muted
           playsInline
@@ -359,6 +360,7 @@ export default function App() {
           id="bg-video-solutions"
           ref={videoRef2}
           src="/videos/solutions.mp4"
+          poster="/videos/solutions-poster.webp"
           className="w-full h-full object-cover"
           muted
           playsInline
