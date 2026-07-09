@@ -69,7 +69,7 @@ export default function AtelierSection({ cardActions }: AtelierSectionProps = {}
               Visualiseur de Fournil
             </h2>
             <p className="max-w-xl text-sm md:text-base opacity-75 leading-relaxed">
-              Explorez nos créations boulangères et pâtissières artisanales. Basculez d'une photo fixe (mode Jour) à une boucle vidéo immersive (mode Nuit) grâce à un fondu enchaîné délicat. Cliquez une carte pour découvrir sa recette et ses secrets.
+              Explorez nos créations boulangères et pâtissières artisanales. Basculez l'ambiance Jour / Nuit grâce à un fondu enchaîné délicat, et cliquez une carte pour découvrir sa recette et ses secrets.
             </p>
           </div>
 

@@ -8,169 +8,78 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ card, isNight, onClick }) => {
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  
-  // Transition and source swapping states for the still photo
+  // Crossfade jour/nuit de la photo
   const [photoSrc, setPhotoSrc] = useState(isNight ? card.nightPhotoSrc : card.photoSrc);
   const [photoOpacity, setPhotoOpacity] = useState(1);
   const targetSrcRef = useRef(isNight ? card.nightPhotoSrc : card.photoSrc);
 
-  // 1. Compute --direct-scale and recompute on load & resize
-  useEffect(() => {
-    const updateScale = () => {
-      if (cardRef.current) {
-        const clientWidth = cardRef.current.clientWidth;
-        const clientHeight = cardRef.current.clientHeight;
-        const scale = Math.min(clientWidth / 660, clientHeight / 836);
-        cardRef.current.style.setProperty('--direct-scale', scale.toString());
-      }
-    };
-
-    updateScale();
-
-    const resizeObserver = new ResizeObserver(() => {
-      updateScale();
-    });
-
-    if (cardRef.current) {
-      resizeObserver.observe(cardRef.current);
-    }
-
-    // Handlers for browser load and resize
-    window.addEventListener('resize', updateScale);
-    window.addEventListener('load', updateScale);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updateScale);
-      window.removeEventListener('load', updateScale);
-    };
-  }, []);
-
-  // 2. Video play / pause behavior on Night Mode toggle
-  useEffect(() => {
-    if (videoRef.current) {
-      if (isNight) {
-        // play() when entering night (catch/ignore promise rejection)
-        videoRef.current.play().catch((err) => {
-          console.warn('Video play interrupted or blocked by browser policy:', err);
-        });
-      } else {
-        // pause() when leaving night
-        videoRef.current.pause();
-      }
-    }
-  }, [isNight]);
-
-  // 3. Photo source crossfade logic:
-  // (fade to 0, swap on load, fade back to 1)
   useEffect(() => {
     const targetSrc = isNight ? card.nightPhotoSrc : card.photoSrc;
     targetSrcRef.current = targetSrc;
-
     if (photoSrc !== targetSrc) {
-      // Fade out to 0 first
-      setPhotoOpacity(0);
+      setPhotoOpacity(0); // fondu sortant, on swappe à la fin
     } else {
-      // If the photoSrc is already the target, ensure opacity is 1
       setPhotoOpacity(1);
     }
   }, [isNight, card.photoSrc, card.nightPhotoSrc, photoSrc]);
 
-  // Triggered when opacity finishes transitioning
   const handleTransitionEnd = (e: React.TransitionEvent<HTMLImageElement>) => {
     if (e.propertyName === 'opacity' && photoOpacity === 0) {
-      // Once opacity reaches 0, we perform the swap
       setPhotoSrc(targetSrcRef.current);
     }
   };
 
-  // Triggered when the swapped image finishes loading
   const handleLoad = () => {
     if (photoSrc === targetSrcRef.current) {
-      // Fade back to 1
       setPhotoOpacity(1);
     }
   };
 
   return (
-    <div 
-      className="card-frame cursor-pointer hover:scale-[1.035] active:scale-[0.985] transition-all duration-500 group shadow-lg hover:shadow-2xl hover:shadow-amber-950/20" 
+    <div
       id={`cardFrame-${card.id}`}
       onClick={onClick}
+      className="group relative aspect-[319/404] w-full rounded-2xl md:rounded-[26px] overflow-hidden bg-[#0e0d0c] cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-amber-950/30 hover:scale-[1.02] active:scale-[0.99] transition-all duration-500 select-none"
     >
-      <div 
-        ref={cardRef} 
-        className="direct-card"
-        id={`directCard-${card.id}`}
-      >
-        <div 
-          className="direct-card__artboard" 
-          id={`directCardTwoArtboard-${card.id}`}
-        >
-          {/* Floating Action Badge */}
-          <div className="absolute top-[6%] right-[6%] z-10 bg-[#1a1714]/80 backdrop-blur-md px-[4%] py-[2%] rounded-full border border-white/15 opacity-80 group-hover:opacity-100 group-hover:scale-105 group-hover:bg-[#1a1714] transition-all duration-300 flex items-center gap-1.5 shadow-lg select-none">
-            <span className="font-mono font-medium text-white tracking-[0.1em]" style={{ fontSize: 'clamp(9px, 2.5cqw, 16px)' }}>
-              RECETTE & SECRETS
-            </span>
-            <span className="material-icons text-amber-400" style={{ fontSize: 'clamp(10px, 2.8cqw, 18px)' }}>
-              menu_book
-            </span>
+      {/* Photo (fondu jour/nuit) */}
+      <img
+        src={photoSrc}
+        onLoad={handleLoad}
+        onTransitionEnd={handleTransitionEnd}
+        alt={card.altText}
+        loading="lazy"
+        decoding="async"
+        style={{ opacity: photoOpacity, objectPosition: '50% 42%' }}
+        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105 transition-transform"
+      />
+
+      {/* Dégradé pour la lisibilité */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10 pointer-events-none" />
+
+      {/* Badge flottant */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-[#1a1714]/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15 opacity-90 group-hover:opacity-100 group-hover:bg-[#1a1714] transition-all duration-300 shadow-lg">
+        <span className="font-mono font-medium text-white tracking-[0.1em] text-[10px] md:text-[11px]">
+          RECETTE &amp; SECRETS
+        </span>
+        <span className="material-icons text-amber-400 text-[15px] leading-none">menu_book</span>
+      </div>
+
+      {/* Pied : icône + titre + description */}
+      <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+        <div className="flex items-center gap-3 mb-2">
+          <div
+            className="flex-none w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center shadow-lg"
+            style={{ background: card.iconBg }}
+          >
+            <span className="material-icons text-white text-[18px] md:text-[20px] leading-none">{card.icon}</span>
           </div>
-
-          {/* Layer 1: Image .direct-card__photo */}
-          <img
-            src={photoSrc}
-            onLoad={handleLoad}
-            onTransitionEnd={handleTransitionEnd}
-            style={{ opacity: photoOpacity }}
-            className="direct-card__photo"
-            alt={card.altText}
-            data-night-src={card.nightPhotoSrc}
-          />
-
-          {/* Layer 2: Video .direct2-video (uniquement si une vidéo est fournie) */}
-          {card.videoSrc && (
-            <video
-              ref={videoRef}
-              src={card.videoSrc}
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="direct2-video"
-            />
-          )}
-
-          {/* Layer 3: Gradient scrim .direct2-grade */}
-          <div className="direct2-grade" />
-
-          {/* Footer block */}
-          <div className="direct-footer">
-            <div className="direct-footer__head">
-              <div 
-                className="direct-footer__icon"
-                style={{
-                  background: card.iconBg,
-                  color: '#fff',
-                  boxShadow: `0 10px 24px -10px ${card.iconBg}99` // adding opacity to shadow
-                }}
-              >
-                <span className="material-icons" style={{ fontSize: 'clamp(15px, 5.6cqw, 34px)', lineHeight: 1 }}>
-                  {card.icon}
-                </span>
-              </div>
-              <div className="direct-footer__title font-heading italic">
-                {card.title}
-              </div>
-            </div>
-
-            <div className="direct-footer__desc font-body">
-              {card.description}
-            </div>
-          </div>
+          <h3 className="font-heading italic text-white text-lg md:text-xl leading-[1.05] tracking-tight">
+            {card.title}
+          </h3>
         </div>
+        <p className="font-body text-amber-100/80 text-[13px] md:text-sm font-medium leading-snug">
+          {card.description}
+        </p>
       </div>
     </div>
   );
