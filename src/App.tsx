@@ -71,14 +71,16 @@ export default function App() {
     const container = scrollContainerRef.current;
     if (!video || !container) return;
 
-    // Mobile : le scrubbing vidéo au scroll n'est pas fiable → lecture auto en boucle
-    if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse)').matches) {
-      video.loop = true;
-      video.muted = true;
-      const p = video.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-      return;
-    }
+    // Amorçage : play() puis pause() déverrouille le seek vidéo pour que le
+    // scrubbing au scroll rende les frames, y compris sur mobile (iOS/Android).
+    video.muted = true;
+    const primeVideo = () => {
+      const pr = video.play();
+      if (pr && typeof pr.then === 'function') pr.then(() => video.pause()).catch(() => {});
+    };
+    primeVideo();
+    const onFirstInteract = () => primeVideo();
+    window.addEventListener('touchstart', onFirstInteract, { passive: true, once: true });
 
     let targetProgress = 0;
     let currentProgress = 0;
@@ -121,6 +123,7 @@ export default function App() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchstart', onFirstInteract);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
   }, []);
@@ -131,14 +134,15 @@ export default function App() {
     const container = solutionsRef.current;
     if (!video || !container) return;
 
-    // Mobile : lecture auto en boucle plutôt que scrubbing
-    if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse)').matches) {
-      video.loop = true;
-      video.muted = true;
-      const p = video.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-      return;
-    }
+    // Amorçage (play+pause) pour déverrouiller le seek au scroll, mobile inclus.
+    video.muted = true;
+    const primeVideo = () => {
+      const pr = video.play();
+      if (pr && typeof pr.then === 'function') pr.then(() => video.pause()).catch(() => {});
+    };
+    primeVideo();
+    const onFirstInteract = () => primeVideo();
+    window.addEventListener('touchstart', onFirstInteract, { passive: true, once: true });
 
     let targetProgress = 0;
     let currentProgress = 0;
@@ -181,6 +185,7 @@ export default function App() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchstart', onFirstInteract);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
   }, []);
