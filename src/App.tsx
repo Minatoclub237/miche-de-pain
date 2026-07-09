@@ -71,6 +71,15 @@ export default function App() {
     const container = scrollContainerRef.current;
     if (!video || !container) return;
 
+    // Mobile : le scrubbing vidéo au scroll n'est pas fiable → lecture auto en boucle
+    if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse)').matches) {
+      video.loop = true;
+      video.muted = true;
+      const p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+      return;
+    }
+
     let targetProgress = 0;
     let currentProgress = 0;
     let animationFrameId: number;
@@ -121,6 +130,15 @@ export default function App() {
     const video = videoRef2.current;
     const container = solutionsRef.current;
     if (!video || !container) return;
+
+    // Mobile : lecture auto en boucle plutôt que scrubbing
+    if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse)').matches) {
+      video.loop = true;
+      video.muted = true;
+      const p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+      return;
+    }
 
     let targetProgress = 0;
     let currentProgress = 0;
