@@ -537,15 +537,19 @@ export default function App() {
                 </div>
                 <div id="capabilities-list" className="flex flex-col w-full border-b border-white/20">
                   {[
-                    { title: 'Pains au Levain Naturel & Farines Bio', desc: 'Fermentation lente de 24h' },
-                    { title: 'Viennoiseries Pur Beurre AOP', desc: 'Feuilletage d\'une croustillance divine' },
-                    { title: 'Pâtisseries Fines & Saisonnières', desc: 'Fruits locaux et sucres non raffinés' },
-                    { title: 'Snacking', desc: 'Sandwichs frais & recettes boulangères' }
+                    { title: 'Pains au Levain Naturel & Farines Bio', desc: 'Fermentation lente de 24h', gallery: breadGallery },
+                    { title: 'Viennoiseries Pur Beurre AOP', desc: 'Feuilletage d\'une croustillance divine', gallery: viennoiserieGallery },
+                    { title: 'Pâtisseries Fines & Saisonnières', desc: 'Fruits locaux et sucres non raffinés', gallery: patisserieGallery },
+                    { title: 'Snacking', desc: 'Sandwichs frais & recettes boulangères', gallery: snackingGallery }
                   ].map((item, index) => (
                     <div
                       id={`capability-item-${index}`}
                       key={item.title}
-                      className="group flex flex-col py-4 border-t border-white/20 text-white hover:bg-white/5 px-2 rounded-lg transition-all duration-300"
+                      onClick={() => setActiveGallery(item.gallery)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveGallery(item.gallery); }}
+                      className="group flex flex-col py-4 border-t border-white/20 text-white hover:bg-white/5 px-2 rounded-lg transition-all duration-300 cursor-pointer"
                     >
                       <div className="flex justify-between items-center">
                         <span className="text-[15.5px] font-bold tracking-tight text-white group-hover:text-amber-300 transition-colors">
