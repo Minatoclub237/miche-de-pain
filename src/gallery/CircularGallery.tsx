@@ -19,13 +19,15 @@ export interface GalleryItem {
 interface CircularGalleryProps extends HTMLAttributes<HTMLDivElement> {
   items: GalleryItem[];
   radius?: number;
+  cardWidth?: number;
+  cardHeight?: number;
   autoRotateSpeed?: number;
   onActiveItemChange?: (index: number) => void;
   onItemClick?: (item: GalleryItem, index: number) => void;
 }
 
 const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
-  ({ items, className, radius = 600, autoRotateSpeed = 0.02, onActiveItemChange, onItemClick, ...props }, ref) => {
+  ({ items, className, radius = 600, cardWidth = 320, cardHeight = 420, autoRotateSpeed = 0.02, onActiveItemChange, onItemClick, ...props }, ref) => {
     const [rotation, setRotation] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -284,12 +286,14 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
             const totalRotation = rotation % 360;
             const relativeAngle = (itemAngle + totalRotation + 360) % 360;
             const normalizedAngle = Math.abs(relativeAngle > 180 ? 360 - relativeAngle : relativeAngle);
-            const opacity = Math.max(0.25, 1 - (normalizedAngle / 180) * 0.95);
+            // Masque les cartes de dos (au-delà de 92°) pour éviter le texte inversé,
+            // fondu progressif pour les cartes latérales.
+            const opacity = normalizedAngle >= 92 ? 0 : Math.max(0.2, 1 - (normalizedAngle / 92) * 0.85);
             const isFront = normalizedAngle < 20;
 
             return (
               <div
-                key={item.photo.url} 
+                key={item.photo.url}
                 role="group"
                 aria-label={item.common}
                 onClick={() => {
@@ -299,19 +303,20 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                     centerOnItem(i);
                   }
                 }}
-                className={cn(
-                  "absolute w-[280px] h-[380px] md:w-[320px] md:h-[420px] transition-all duration-300",
-                  isFront ? "cursor-pointer" : "cursor-pointer scale-95"
-                )}
+                className="absolute transition-all duration-300 cursor-pointer"
                 style={{
+                  width: cardWidth,
+                  height: cardHeight,
                   transform: `rotateY(${itemAngle}deg) translateZ(${radius}px)`,
                   left: '50%',
                   top: '50%',
-                  marginLeft: '-140px', // Adjusted to match dynamic width
-                  marginTop: '-190px',  // Adjusted to match dynamic height
+                  marginLeft: -cardWidth / 2,
+                  marginTop: -cardHeight / 2,
                   opacity: opacity,
                   zIndex: Math.round(opacity * 100),
-                  pointerEvents: opacity > 0.25 ? 'auto' : 'none'
+                  pointerEvents: opacity > 0.5 ? 'auto' : 'none',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
                 }}
               >
                 <div className={cn(

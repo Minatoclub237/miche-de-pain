@@ -36,7 +36,8 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
   // Pas d'écran d'accueil : le clic sur une carte mène directement au carrousel des 6 photos.
   const [showWelcome, setShowWelcome] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
-  const [radius, setRadius] = useState(620);
+  const [radius, setRadius] = useState(640);
+  const [cardDims, setCardDims] = useState({ w: 320, h: 420 });
   const galleryRef = useRef<HTMLDivElement>(null);
 
   // Update dynamic time display
@@ -53,14 +54,19 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
   // Handle dynamic sizing of 3D circular gallery radius
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setRadius(380); // mobile portrait
-      } else if (window.innerWidth < 768) {
-        setRadius(460); // tablet/small screens
-      } else if (window.innerWidth < 1024) {
-        setRadius(540); // medium laptops
+      const w = window.innerWidth;
+      if (w < 640) {
+        setRadius(300); // mobile : rayon + cartes réduits pour un coverflow net
+        setCardDims({ w: 208, h: 278 });
+      } else if (w < 768) {
+        setRadius(430);
+        setCardDims({ w: 250, h: 330 });
+      } else if (w < 1024) {
+        setRadius(540);
+        setCardDims({ w: 290, h: 385 });
       } else {
-        setRadius(640); // standard desktop
+        setRadius(640);
+        setCardDims({ w: 320, h: 420 });
       }
     };
     handleResize();
@@ -79,10 +85,11 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
       {/* Bouton retour vers la boulangerie */}
       <button
         onClick={onBack}
-        className="fixed top-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-white/90 backdrop-blur-md border border-stone-200 shadow-md rounded-full pl-3 pr-4 py-2 text-xs font-mono text-stone-700 hover:text-emerald-700 hover:border-emerald-300 transition-colors pointer-events-auto cursor-pointer active:scale-95"
+        className="fixed top-4 right-4 sm:top-5 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[60] flex items-center gap-2 bg-white/90 backdrop-blur-md border border-stone-200 shadow-md rounded-full pl-3 pr-4 py-2 text-xs font-mono text-stone-700 hover:text-emerald-700 hover:border-emerald-300 transition-colors pointer-events-auto cursor-pointer active:scale-95"
       >
         <ArrowLeft className="w-4 h-4" />
-        Retour à la boulangerie
+        <span className="sm:hidden">Retour</span>
+        <span className="hidden sm:inline">Retour à la boulangerie</span>
       </button>
 
       {/* Scroll indicator & Fixed Museum Vignette */}
@@ -109,7 +116,7 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-6 text-right">
+          <div className="hidden sm:flex items-center gap-6 text-right">
             <div className="hidden md:flex flex-col font-mono text-[10px] text-stone-400 tracking-wider">
               <span>STATUT EXPOSITION</span>
               <span className="text-stone-600">MODE CONSERVATEUR</span>
@@ -127,32 +134,32 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
         {/* BOTTOM METADATA OVERLAY (Active item at front) */}
         <footer className="w-full flex flex-col md:flex-row items-end justify-between gap-6 pointer-events-auto">
           
-          {/* Active Specimen Summary */}
-          <div className="max-w-md bg-white/90 backdrop-blur-md border border-stone-200 rounded-2xl p-5 md:p-6 shadow-xl shadow-stone-200/40 animate-fade-in">
+          {/* Active Specimen Summary (compacte sur mobile) */}
+          <div className="w-full max-w-md bg-white/90 backdrop-blur-md border border-stone-200 rounded-2xl p-3.5 md:p-6 shadow-xl shadow-stone-200/40 animate-fade-in">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 border border-stone-200">
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 border border-stone-200">
                 {config.itemLabel} 0{activeIndex + 1}
               </span>
             </div>
 
-            <h3 className="text-2xl font-serif font-medium text-stone-900 mt-2.5">
+            <h3 className="text-lg md:text-2xl font-serif font-medium text-stone-900 mt-1.5 md:mt-2.5 leading-tight">
               {activeSpecimen.common}
             </h3>
-            <p className="text-sm font-serif italic text-emerald-700 mt-1">
+            <p className="text-xs md:text-sm font-serif italic text-emerald-700 mt-0.5 md:mt-1">
               {activeSpecimen.binomial}
             </p>
-            <p className="text-xs text-stone-600 mt-3 line-clamp-2 leading-relaxed">
+            <p className="hidden sm:block text-xs text-stone-600 mt-3 line-clamp-2 leading-relaxed">
               {activeSpecimen.description}
             </p>
 
-            <div className="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-stone-100">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-[10px] font-mono text-stone-500">{activeSpecimen.coordinates}</span>
+            <div className="flex items-center justify-between gap-4 mt-3 md:mt-4 pt-3 md:pt-4 border-t border-stone-100">
+              <div className="flex items-center gap-2 min-w-0">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span className="text-[10px] font-mono text-stone-500 truncate">{activeSpecimen.coordinates}</span>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedSpecimen(activeSpecimen)}
-                className="flex items-center gap-1.5 text-xs font-mono text-emerald-600 hover:text-emerald-700 transition-colors group cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-mono text-emerald-600 hover:text-emerald-700 transition-colors group cursor-pointer shrink-0"
               >
                 <span>Fiche Technique</span>
                 <Maximize2 className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
@@ -186,10 +193,12 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
 
       {/* 3D EXHIBITION STAGE */}
       <main className="fixed inset-0 w-full h-full flex items-center justify-center pointer-events-auto z-1">
-        <div className="w-full h-full max-w-7xl mx-auto flex items-center justify-center px-4">
-          <CircularGallery 
+        <div className="w-full h-full max-w-7xl mx-auto flex items-center justify-center px-4 -translate-y-20 sm:translate-y-0">
+          <CircularGallery
             items={config.specimens}
             radius={radius}
+            cardWidth={cardDims.w}
+            cardHeight={cardDims.h}
             autoRotateSpeed={0.015}
             onActiveItemChange={(idx) => setActiveIndex(idx)}
             onItemClick={handleItemClick}
