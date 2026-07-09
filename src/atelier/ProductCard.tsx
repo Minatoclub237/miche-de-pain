@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { CardData } from './types';
 
 interface ProductCardProps {
@@ -8,32 +8,10 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ card, isNight, onClick }) => {
-  // Crossfade jour/nuit de la photo
-  const [photoSrc, setPhotoSrc] = useState(isNight ? card.nightPhotoSrc : card.photoSrc);
-  const [photoOpacity, setPhotoOpacity] = useState(1);
-  const targetSrcRef = useRef(isNight ? card.nightPhotoSrc : card.photoSrc);
-
-  useEffect(() => {
-    const targetSrc = isNight ? card.nightPhotoSrc : card.photoSrc;
-    targetSrcRef.current = targetSrc;
-    if (photoSrc !== targetSrc) {
-      setPhotoOpacity(0); // fondu sortant, on swappe à la fin
-    } else {
-      setPhotoOpacity(1);
-    }
-  }, [isNight, card.photoSrc, card.nightPhotoSrc, photoSrc]);
-
-  const handleTransitionEnd = (e: React.TransitionEvent<HTMLImageElement>) => {
-    if (e.propertyName === 'opacity' && photoOpacity === 0) {
-      setPhotoSrc(targetSrcRef.current);
-    }
-  };
-
-  const handleLoad = () => {
-    if (photoSrc === targetSrcRef.current) {
-      setPhotoOpacity(1);
-    }
-  };
+  // Les deux images (jour + nuit) sont chargées d'emblée et empilées :
+  // basculer le mode ne fait qu'un fondu d'opacité instantané, sans rechargement.
+  const imgClass =
+    'absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105';
 
   return (
     <div
@@ -41,16 +19,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ card, isNight, onClick }) => 
       onClick={onClick}
       className="group relative aspect-[319/404] w-full rounded-2xl md:rounded-[26px] overflow-hidden bg-[#0e0d0c] cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-amber-950/30 hover:scale-[1.02] active:scale-[0.99] transition-all duration-500 select-none"
     >
-      {/* Photo (fondu jour/nuit) */}
+      {/* Image mode Jour */}
       <img
-        src={photoSrc}
-        onLoad={handleLoad}
-        onTransitionEnd={handleTransitionEnd}
+        src={card.photoSrc}
         alt={card.altText}
-        loading="lazy"
+        loading="eager"
         decoding="async"
-        style={{ opacity: photoOpacity, objectPosition: '50% 42%' }}
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:scale-105 transition-transform"
+        style={{ opacity: isNight ? 0 : 1, objectPosition: '50% 42%' }}
+        className={imgClass}
+      />
+      {/* Image mode Nuit */}
+      <img
+        src={card.nightPhotoSrc}
+        alt={card.altText}
+        loading="eager"
+        decoding="async"
+        style={{ opacity: isNight ? 1 : 0, objectPosition: '50% 42%' }}
+        className={imgClass}
       />
 
       {/* Dégradé pour la lisibilité */}
