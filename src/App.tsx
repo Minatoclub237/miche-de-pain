@@ -341,7 +341,7 @@ export default function App() {
         <video
           id="bg-video-hero"
           ref={videoRef}
-          src="https://www.image2url.com/r2/default/videos/1783539562330-f1b6d0d4-653f-4089-84e3-b756e3f124b6.mp4"
+          src="/videos/hero.mp4"
           className="w-full h-full object-cover"
           muted
           playsInline
@@ -358,7 +358,7 @@ export default function App() {
         <video
           id="bg-video-solutions"
           ref={videoRef2}
-          src="https://www.image2url.com/r2/default/videos/1783539756073-6f3d2244-9afa-41aa-98c1-0c0904375107.mp4"
+          src="/videos/solutions.mp4"
           className="w-full h-full object-cover"
           muted
           playsInline
@@ -842,7 +842,7 @@ export default function App() {
               {/* Looping Video */}
               <video
                 id="modal-loop-video"
-                src="https://www.image2url.com/r2/default/videos/1783573088983-256cc37a-1300-4327-9d0d-784a5578c2bc.mp4"
+                src="/videos/modal.mp4"
                 className="w-full h-full object-cover select-none pointer-events-none"
                 autoPlay
                 loop

@@ -162,7 +162,7 @@ body {
   object-fit: cover;
   object-position: 50% 42%;
   z-index: 0;
-  transition: opacity 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .direct2-video {
@@ -175,7 +175,7 @@ body {
   z-index: 0;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.is-night .direct2-video {

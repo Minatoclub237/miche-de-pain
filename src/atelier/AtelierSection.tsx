@@ -77,7 +77,7 @@ export default function AtelierSection({ cardActions }: AtelierSectionProps = {}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
             <div className="hidden lg:flex flex-col text-right font-mono text-[10px] opacity-40">
               <span>SCHÉMA ACTIF : {isNight ? 'NUIT (BOUCLE VIDÉO)' : 'JOUR (PHOTO FIXE)'}</span>
-              <span>DURÉE DU FONDU : 4.5S</span>
+              <span>DURÉE DU FONDU : 0.35S</span>
             </div>
 
             <button
