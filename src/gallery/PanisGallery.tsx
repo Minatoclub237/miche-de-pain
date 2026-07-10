@@ -95,9 +95,9 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
       {/* Scroll indicator & Fixed Museum Vignette */}
       <div className="fixed inset-0 museum-vignette pointer-events-none z-0" />
 
-      {/* Decorative ambient background lights */}
-      <div className="fixed top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-100/40 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="fixed bottom-1/4 right-1/4 w-[400px] h-[400px] bg-amber-100/30 rounded-full blur-[100px] pointer-events-none z-0" />
+      {/* Decorative ambient background lights (masqués sur mobile : flous géants trop coûteux pour le GPU) */}
+      <div className="hidden md:block fixed top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-100/40 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="hidden md:block fixed bottom-1/4 right-1/4 w-[400px] h-[400px] bg-amber-100/30 rounded-full blur-[100px] pointer-events-none z-0" />
 
       {/* FIXED INTERFACE FRAME (Header, Footer, and Info Overlays) */}
       <div className="fixed inset-0 flex flex-col justify-between p-6 md:p-8 pointer-events-none z-10 select-none">

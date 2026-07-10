@@ -233,6 +233,16 @@ export default function App() {
   const yTopSet3 = useTransform(scrollYProgress, [0.69, 0.99], ['0px', '-120px']);
   const yBottomSet3 = useTransform(scrollYProgress, [0.69, 0.99], ['0px', '120px']);
 
+  // Précharge en arrière-plan les images des 4 galeries -> ouverture instantanée au clic
+  useEffect(() => {
+    const urls = [breadGallery, viennoiserieGallery, patisserieGallery, snackingGallery]
+      .flatMap((g) => g.specimens.map((s) => s.photo.url));
+    const preload = () => urls.forEach((u) => { const img = new Image(); img.src = u; });
+    const w = window as unknown as { requestIdleCallback?: (cb: () => void) => void };
+    if (typeof w.requestIdleCallback === 'function') w.requestIdleCallback(preload);
+    else setTimeout(preload, 1500);
+  }, []);
+
   // Retour depuis la galerie : replacer l'utilisateur sur la section Atelier
   useEffect(() => {
     if (!activeGallery && returningFromGalleryRef.current) {

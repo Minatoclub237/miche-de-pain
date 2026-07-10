@@ -275,10 +275,11 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
         {...props}
       >
         <div
-          className="relative w-full h-full flex items-center justify-center transition-transform duration-75"
+          className="relative w-full h-full flex items-center justify-center"
           style={{
             transform: `rotateY(${rotation}deg)`,
             transformStyle: 'preserve-3d',
+            willChange: 'transform',
           }}
         >
           {items.map((item, i) => {
@@ -303,7 +304,7 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                     centerOnItem(i);
                   }
                 }}
-                className="absolute transition-all duration-300 cursor-pointer"
+                className="absolute cursor-pointer"
                 style={{
                   width: cardWidth,
                   height: cardHeight,
