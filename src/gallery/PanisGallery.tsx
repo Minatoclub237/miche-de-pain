@@ -28,9 +28,10 @@ const cn = (...classes: (string | undefined | null | false)[]) => {
 interface PanisGalleryProps {
   config: GalleryConfig;
   onBack: () => void;
+  onCommander: () => void;
 }
 
-export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
+export default function PanisGallery({ config, onBack, onCommander }: PanisGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedSpecimen, setSelectedSpecimen] = useState<Specimen | null>(null);
   // Pas d'écran d'accueil : le clic sur une carte mène directement au carrousel des 6 photos.
@@ -202,6 +203,7 @@ export default function PanisGallery({ config, onBack }: PanisGalleryProps) {
             autoRotateSpeed={0.015}
             onActiveItemChange={(idx) => setActiveIndex(idx)}
             onItemClick={handleItemClick}
+            onCommander={onCommander}
           />
         </div>
       </main>

@@ -24,10 +24,11 @@ interface CircularGalleryProps extends HTMLAttributes<HTMLDivElement> {
   autoRotateSpeed?: number;
   onActiveItemChange?: (index: number) => void;
   onItemClick?: (item: GalleryItem, index: number) => void;
+  onCommander?: () => void;
 }
 
 const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
-  ({ items, className, radius = 600, cardWidth = 320, cardHeight = 420, autoRotateSpeed = 0.02, onActiveItemChange, onItemClick, ...props }, ref) => {
+  ({ items, className, radius = 600, cardWidth = 320, cardHeight = 420, autoRotateSpeed = 0.02, onActiveItemChange, onItemClick, onCommander, ...props }, ref) => {
     const [rotation, setRotation] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -351,10 +352,16 @@ const CircularGallery = React.forwardRef<HTMLDivElement, CircularGalleryProps>(
                     </div>
                   </div>
                   
-                  {/* Corner catalog tags */}
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md border border-stone-200/80 text-[10px] text-stone-700 font-mono py-1 px-2.5 rounded-full tracking-wider shadow-sm">
-                    SPN-00{i + 1}
-                  </div>
+                  {/* Bouton COMMANDER -> renvoie vers les CTA de Nous Trouver */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onCommander) onCommander();
+                    }}
+                    className="absolute top-4 left-4 z-20 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-mono font-semibold py-1.5 px-3.5 rounded-full tracking-wider shadow-md cursor-pointer transition-colors active:scale-95"
+                  >
+                    COMMANDER
+                  </button>
                 </div>
               </div>
             );

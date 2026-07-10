@@ -46,7 +46,7 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [activeGallery, setActiveGallery] = useState<GalleryConfig | null>(null);
-  const returningFromGalleryRef = useRef(false);
+  const returnTargetRef = useRef<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoRef2 = useRef<HTMLVideoElement>(null);
@@ -243,28 +243,39 @@ export default function App() {
     else setTimeout(preload, 1500);
   }, []);
 
-  // Retour depuis la galerie : replacer l'utilisateur sur la section Atelier
+  // Ouverture/fermeture de la galerie : départ propre en haut, retour vers la section cible
   useEffect(() => {
-    if (!activeGallery && returningFromGalleryRef.current) {
-      returningFromGalleryRef.current = false;
+    if (activeGallery) {
+      window.scrollTo(0, 0); // la galerie démarre à la rotation 0
+    } else if (returnTargetRef.current) {
+      const target = returnTargetRef.current;
+      returnTargetRef.current = null;
       requestAnimationFrame(() => {
-        document.getElementById('atelier')?.scrollIntoView();
+        document.getElementById(target)?.scrollIntoView();
       });
     }
   }, [activeGallery]);
 
   const closeGallery = () => {
-    returningFromGalleryRef.current = true;
+    returnTargetRef.current = 'atelier';
+    setActiveGallery(null);
+  };
+  const commanderFromGallery = () => {
+    returnTargetRef.current = 'nous-trouver';
     setActiveGallery(null);
   };
 
-  // Vue galerie plein écran (clic sur une carte de l'Atelier liée à une galerie)
-  if (activeGallery) {
-    return <PanisGallery config={activeGallery} onBack={closeGallery} />;
-  }
-
   return (
-    <div id="app-container" className="relative w-full min-h-screen">
+    <>
+      {/* Galerie plein écran (le site reste monté mais masqué -> les vidéos ne se démontent pas) */}
+      {activeGallery && (
+        <PanisGallery config={activeGallery} onBack={closeGallery} onCommander={commanderFromGallery} />
+      )}
+      <div
+        id="app-container"
+        className="relative w-full min-h-screen"
+        style={activeGallery ? { display: 'none' } : undefined}
+      >
       {/* ─── Header ─── */}
       <header
         id="app-header"
@@ -893,6 +904,7 @@ export default function App() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </>
   );
 }
